@@ -83,26 +83,6 @@ fn steamid_from_vanityurl(vanityurl: String) -> Result<u64, String> {
         	Err(format!("{}", error))
         }
     }
-    	
-
-
-    
-    // Object(
-    //     {
-    //         "body": String(
-    //             "https://docs.rs/reqwest"
-    //         ),
-    //         "id": Number(
-    //             101
-    //         ),
-    //         "title": String(
-    //             "Reqwest.rs"
-    //         ),
-    //         "userId": Number(
-    //             1
-    //         )
-    //     }
-    // )
     
 }
 
