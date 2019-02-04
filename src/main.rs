@@ -91,6 +91,7 @@ fn main() {
             .prefix("."))
         .command("steamid", |c| c.cmd(commands::steam::steamid))
         .command("lobby", |c| c.cmd(commands::lobby::lobby))
+        .command("autochess", |c| c.cmd(commands::autochess::autochess))
         );
 
     if let Err(why) = client.start() {

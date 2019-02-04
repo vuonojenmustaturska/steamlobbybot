@@ -10,7 +10,8 @@ command!(autochess(_ctx, msg) {
             	if response.ranking_info.len() > 0
             	{
             		let ref player: AutochessRanking = response.ranking_info[0];
-            		let _ = msg.reply(format!("Autochess MMR: {}, Rank: {}, Matches: {}.", player.score, player.mmr_level, player.matches).as_str());
+            		let rank = level_to_rank(player.mmr_level);
+            		let _ = msg.reply(format!("Autochess MMR: {}, Rank: {} ({}), Matches: {}.", player.score, rank, player.mmr_level, player.matches).as_str());
             	}
 
             },
@@ -34,6 +35,18 @@ fn get_autochess_json(_steamid: u64) -> Result<AutochessResponse, reqwest::Error
 
     println!("{:#?}", resp_json);
     Ok(resp_json)
+}
+
+fn level_to_rank(input: u64) -> std::string::String {
+    match input{
+        38 => format!("♕Queen"),
+        37 => format!("♔King"),
+        28...36 => format!("♖Rook {}", input-27),
+        19...27 => format!("♗Bishop {}", input-18),
+        10...18 => format!("♘Knight {}", input-9),
+        1...9 => format!("♙Pawn {}", input),
+        _ => format!("Unknown")
+    }
 }
 
 #[derive(Deserialize,Debug)]
