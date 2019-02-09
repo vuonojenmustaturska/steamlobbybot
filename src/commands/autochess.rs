@@ -1,17 +1,19 @@
 extern crate reqwest;
 use ::STEAMIDS;
+use std::collections::HashMap;
 
 command!(autochess(_ctx, msg) {
 	let mut _steamids = STEAMIDS.lock().unwrap();
 	if _steamids.contains_key(&msg.author.id.to_string())
 	{
-        match get_autochess_json(_steamids[&msg.author.id.to_string()]) {
+		let steamid = _steamids[&msg.author.id.to_string()];
+        match get_autochess_json(steamid) {
             Ok(response) => {
-            	if response.ranking_info.len() > 0
+            	if response.user_info.contains_key(&steamid.to_string())
             	{
-            		let ref player: AutochessRanking = response.ranking_info[0];
+            		let ref player: AutochessUserInfo = response.user_info[&steamid.to_string()];
             		let rank = level_to_rank(player.mmr_level);
-            		let _ = msg.reply(format!("Autochess MMR: {}, Rank: {} ({}), Matches: {}.", player.score, rank, player.mmr_level, player.matches).as_str());
+            		let _ = msg.reply(format!("Autochess Rank: {} ({}), Matches: {}, Candy: {}.", rank, player.mmr_level, player.matches, player.candy).as_str());
             	}
 
             },
@@ -29,7 +31,7 @@ command!(autochess(_ctx, msg) {
 
 fn get_autochess_json(_steamid: u64) -> Result<AutochessResponse, reqwest::Error> {
     let resp_json: AutochessResponse = reqwest::Client::new()
-        .get(format!("http://101.200.189.65:431/dac/ranking/get?player_ids={}", _steamid).as_str())
+        .get(format!("http://101.200.189.65:431/dac/heros/get/@{}", _steamid).as_str())
         .send()?
         .json()?;
 
@@ -53,14 +55,14 @@ fn level_to_rank(input: u64) -> std::string::String {
 struct AutochessResponse {
     err: u64,
     msg: String,
-    ranking_info: Vec<AutochessRanking>
+    user_info: HashMap<String, AutochessUserInfo>
 }
 
 #[derive(Deserialize,Debug)]
-struct AutochessRanking {
-    player: String,
-    score: String,
+struct AutochessUserInfo {
+    candy: u64,
     mmr_level: u64,
     #[serde(rename = "match")] 
     matches: u64
 }
+

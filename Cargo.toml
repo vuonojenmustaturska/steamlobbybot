@@ -1,6 +1,6 @@
 [package]
 name = "steam_lobbybot"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["naksu <naksu@youzen.ext.b2.fi>"]
 
 [dependencies]
