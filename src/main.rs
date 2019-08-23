@@ -88,10 +88,18 @@ fn main() {
     client.with_framework(StandardFramework::new()
         .configure(|c| c
             .owners(owners)
+            .dynamic_prefix(|_, msg| {
+		        Some(match msg.content.split_whitespace().take(1).next() {
+		        Some(",m") => ",",
+		        Some(".m") => ",",
+		        _ => "."
+		        }.to_string())
+		    })
             .prefix("."))
         .command("steamid", |c| c.cmd(commands::steam::steamid))
         .command("lobby", |c| c.cmd(commands::lobby::lobby))
         .command("autochess", |c| c.cmd(commands::autochess::autochess))
+        .command("m", |c| c.cmd(commands::meme::meme))
         );
 
     if let Err(why) = client.start() {
